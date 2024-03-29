@@ -46,6 +46,8 @@ contract EnergyToken is ERC721 {
     }
 
     function listBid(uint256 _amount, uint256 _price) public authorised {
+        require(_amount > 0);
+        require(_price > 0);
         totalBids++;
         bids[totalBids] = Demand(totalBids, msg.sender, _price, _amount, true);
     }
@@ -55,6 +57,7 @@ contract EnergyToken is ERC721 {
         uint256 _price
     ) public authorised {
         require(_amount > 0);
+        require(_price > 0);
         totalSellRequests++;
         sellRequests[totalSellRequests] = Demand(
             totalSellRequests,
@@ -66,29 +69,27 @@ contract EnergyToken is ERC721 {
     }
 
     function buyEnergy(uint256 _id) public payable authorised {
-        require(_id != 0);
-        require(_id <= totalSellRequests);
+        require(_id != 0, "Invalid request ID");
+        require(_id <= totalSellRequests, "Invalid request ID");
+        require(sellRequests[_id].status, "Sell request not available");
+        require(
+            msg.sender != sellRequests[_id].creator,
+            "Cannot buy own sell request"
+        );
 
-        require(sellRequests[_id].status);
-
-        require(msg.value >= sellRequests[_id].price);
+        require(msg.value >= sellRequests[_id].price, "Insufficient funds");
 
         totalTrades++;
 
         sellRequests[_id].status = false;
 
-        transfer(sellRequests[_id].creator, sellRequests[_id].price);
+        payable(sellRequests[_id].creator).transfer(sellRequests[_id].price);
 
         _safeMint(msg.sender, totalTrades);
     }
 
     function getSellRequest(uint256 _id) public view returns (Demand memory) {
         return sellRequests[_id];
-    }
-
-    function transfer(address _to, uint256 _price) private {
-        (bool success, ) = _to.call{value: _price}("");
-        require(success);
     }
 
     function getPin(address _adr) public view returns (uint256) {

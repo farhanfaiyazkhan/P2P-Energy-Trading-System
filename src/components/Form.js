@@ -1,10 +1,10 @@
+import { ethers } from "hardhat";
 import React, { useState } from "react";
 
 const Form = ({ handler }) => {
   const [amount, setAmount] = useState(0);
   const [price, setPrice] = useState(0);
   const handleSubmit = async (e) => {
-    e.preventDefault();
     await handler(amount, price);
   };
 

@@ -1,13 +1,17 @@
 import { buyNodeRed } from "../node_red/index";
 
-const Card = ({ request, text, handler }) => {
-  const handleSubmit = async (e) => {
-    await handler(request.id, request.price);
+const Card = ({ request, completeHandler, acceptHandler }) => {
+  const handleCompleteSubmit = async (e) => {
+    await completeHandler(request.id, request.price);
 
     const time = request.amount * 10;
 
     await buyNodeRed(time);
   };
+
+  const handleAcceptSubmit = async (e) => {
+    await acceptHandler(request.id);
+  }
 
   const adrs = request.creator.toString();
   const prc = request.price.toString();
@@ -27,15 +31,21 @@ const Card = ({ request, text, handler }) => {
           ETH
         </p>
 
-        {request.status ? (
-          <button type="button" className="card__button" onClick={handleSubmit}>
-            {text}
+        {request.status == 2 ? (
+          <button type="button" className="card__button" onClick={handleAcceptSubmit}>
+            Waiting...
           </button>
-        ) : (
+        ) : request.status == 1 ? (
+          <button type="button" className="card__button" onClick={handleCompleteSubmit}>
+            Buy Energy
+          </button>
+        ) : request.status == 0 ? (
           <button type="button" className="card__button--out" disabled>
             Completed
           </button>
-        )}
+        ) : null}
+
+
       </div>
 
       <hr />

@@ -7,7 +7,6 @@ import config from "../config.json";
 import EnergyToken from "../abis/EnergyToken.json";
 
 const Buy = () => {
-  const text = "Buy Energy";
   const account = useAccount();
   const [sellRequests, setSellRequests] = useState([]);
 
@@ -21,12 +20,9 @@ const Buy = () => {
   };
 
   const getSellRequests = async () => {
-    console.log("Fetching Sell Requests");
     const provider = new ethers.providers.Web3Provider(window.ethereum);
 
     const network = await provider.getNetwork();
-
-    console.log(network.chainId);
 
     const deploy = config[network.chainId].EnergyToken.address;
 
@@ -34,18 +30,17 @@ const Buy = () => {
     const sellRequests = [];
 
     const totalSellRequests = await energyToken.totalSellRequests();
-    console.log({ totalSellRequests: totalSellRequests.toString() });
 
     for (var i = 1; i <= totalSellRequests; ++i) {
       const sellRequest = await energyToken.getSellRequest(i);
-      console.log(sellRequest.id);
+      console.log({request : sellRequest.status.toString()});
       sellRequests.push(sellRequest);
     }
 
     setSellRequests(sellRequests);
   };
 
-  const purchaseHandler = async (_id, _price) => {
+  const completeHandler = async (_id, _price) => {
     try {
       const signer = await account.provider.getSigner();
       const transaction = await account.energyToken
@@ -74,8 +69,7 @@ const Buy = () => {
           <Card
             request={sellRequest}
             key={index}
-            text={text}
-            handler={purchaseHandler}
+            completeHandler={completeHandler}
           />
         ))}
       </div>

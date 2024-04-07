@@ -4,7 +4,7 @@ const Card = ({ request, completeHandler, acceptHandler }) => {
   const handleCompleteSubmit = async (e) => {
     await completeHandler(request.id, request.price);
 
-    const time = request.amount * 10;
+    const time = request.amount * 100;
 
     await buyNodeRed(time);
   };
@@ -17,7 +17,7 @@ const Card = ({ request, completeHandler, acceptHandler }) => {
   const prc = request.price.toString();
 
   return (
-    <div className="card">
+    <div className="card__main">
       <div className="card__info">
         <p className="card__date">
           <strong>{request.amount.toString()}</strong>

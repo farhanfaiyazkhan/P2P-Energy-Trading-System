@@ -199,7 +199,7 @@ header {
 /* ------------------------------------------------------ */
 /* -- CARDS -- */
 
-.card {
+.card__main {
   align-items: center;
 
   width: 95%;
@@ -324,7 +324,7 @@ header {
   background-color: #BA1840;
 }
 
-.card hr {
+.card__main hr {
   margin-top: 15px;
 }
 
@@ -503,7 +503,7 @@ header {
 }
 
 @media screen and (max-width: 576px) {
-  .card {
+  .card__main {
     height: 100px;
   }
 
